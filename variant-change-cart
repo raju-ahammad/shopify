@@ -1,0 +1,50 @@
+document.addEventListener('alpine:init', function() {
+  Alpine.data('product', function() {
+    return {
+      select(e) {
+        const id = e.currentTarget.dataset.productId
+        const option = e.currentTarget.dataset.optionItem
+        const disabled = e.currentTarget.dataset.unavailable == undefined ? false : true
+        const addToCart = document.querySelector('button[data-product-id="' + id + '"]')
+        const optionList = document.querySelectorAll('[data-product-id="' + id + '"]')
+        
+        if(!disabled) {
+          const select = document.querySelector('select[data-product-id="' + id + '"]')
+          const options = select.querySelectorAll('option')
+          options.forEach(_option => {
+            const _dataValue = _option.dataset.value
+            if(_dataValue === option) {
+              _option.selected = "selected"
+            }
+            else {
+              if(_option.hasAttribute('selected')) _option.removeAttribute('selected')
+            }
+          })
+          optionList.forEach(elm => {
+            if(!elm.isSameNode(e.currentTarget)) {
+              if(elm.classList.contains("swatch__active")){
+                elm.classList.remove("swatch__active")
+              }
+            }
+            else {
+              if(!elm.classList.contains("swatch__active")){
+                elm.classList.add("swatch__active")
+              }
+            }
+          })
+          
+          if(addToCart) {
+            addToCart.disabled = false
+            addToCart.innerHTML = 'Add to Cart'
+          }
+        }
+        else {
+          if(addToCart) {
+            addToCart.disabled = true
+            addToCart.innerHTML = 'Sold Out'
+          }
+        }
+      }
+    }
+  })
+})
